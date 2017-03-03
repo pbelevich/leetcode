@@ -17,6 +17,7 @@ public class SolutionTest {
         assertEquals("/c", SOLUTION.simplifyPath("/a/./b/../../c/"));
         assertEquals("/home/foo", SOLUTION.simplifyPath("/home//foo/"));
         assertEquals("/", SOLUTION.simplifyPath("/.."));
+        assertEquals("/...", SOLUTION.simplifyPath("/..."));
     }
 
 }
