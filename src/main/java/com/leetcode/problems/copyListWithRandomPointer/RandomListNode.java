@@ -11,10 +11,9 @@ public class RandomListNode {
         this.label = x;
     }
 
-    RandomListNode(int label, RandomListNode next, RandomListNode random) {
+    RandomListNode(int label, RandomListNode next) {
         this.label = label;
         this.next = next;
-        this.random = random;
     }
 
     @Override

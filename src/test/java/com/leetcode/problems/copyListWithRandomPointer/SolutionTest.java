@@ -5,14 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * https://leetcode.com/problems/copy-list-with-random-pointer/
- *
- * 138. Copy List with Random Pointer
- *
- * A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
- *
- * Return a deep copy of the list.
- *
  * @author Pavel Belevich
  */
 public class SolutionTest {
@@ -28,6 +20,16 @@ public class SolutionTest {
         original.random = original;
         RandomListNode copy = new RandomListNode(42);
         copy.random = copy;
+        assertEquals(copy, SOLUTION.copyRandomList(original));
+
+        original = new RandomListNode(1, new RandomListNode(2, new RandomListNode(3)));
+        original.random = original.next;
+        original.next.random = original.next;
+        original.next.next.random = original.next;
+        copy = new RandomListNode(1, new RandomListNode(2, new RandomListNode(3)));
+        copy.random = copy.next;
+        copy.next.random = copy.next;
+        copy.next.next.random = copy.next;
         assertEquals(copy, SOLUTION.copyRandomList(original));
     }
 
