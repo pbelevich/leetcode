@@ -1,34 +1,36 @@
 package com.leetcode.problems.mergeKSortedLists;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.stream.Collectors;
-
 /**
  * @author Pavel Belevich
  */
 public class Solution {
 
     public ListNode mergeKLists(ListNode[] lists) {
-        ListNode result = null;
-        ListNode min = null;
-        PriorityQueue<ListNode> queue = new PriorityQueue<>(Comparator.comparing(node -> node.val));
-        queue.addAll(Arrays.stream(lists).filter(Objects::nonNull).collect(Collectors.toList()));
-        while (!queue.isEmpty()) {
-            if (min == null) {
-                min = queue.poll();
-                result = min;
-            } else {
-                min.next = queue.poll();
-                min = min.next;
-            }
-            if (min.next != null) {
-                queue.offer(min.next);
-            }
+        return partion(lists, 0, lists.length - 1);
+    }
+
+    static ListNode partion(ListNode[] lists, int s, int e) {
+        if (s == e) return lists[s];
+        if (s < e) {
+            int q = (s + e) >> 1;
+            ListNode l1 = partion(lists, s, q);
+            ListNode l2 = partion(lists, q + 1, e);
+            return merge(l1, l2);
+        } else {
+            return null;
         }
-        return result;
+    }
+
+    static ListNode merge(ListNode l1, ListNode l2) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        if (l1.val < l2.val) {
+            l1.next = merge(l1.next, l2);
+            return l1;
+        } else {
+            l2.next = merge(l1, l2.next);
+            return l2;
+        }
     }
 
 }
