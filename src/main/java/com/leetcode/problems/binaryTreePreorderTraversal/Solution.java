@@ -1,6 +1,8 @@
 package com.leetcode.problems.binaryTreePreorderTraversal;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -10,16 +12,19 @@ public class Solution {
 
     public List<Integer> preorderTraversal(TreeNode root) {
         final List<Integer> result = new ArrayList<>();
-        traverse(root, result);
-        return result;
-    }
 
-    void traverse(TreeNode root, List<Integer> result) {
         if (root != null) {
-            result.add(root.val);
-            traverse(root.left, result);
-            traverse(root.right, result);
+            Deque<TreeNode> stack = new ArrayDeque<>();
+            stack.push(root);
+            while (!stack.isEmpty()) {
+                final TreeNode node = stack.pop();
+                result.add(node.val);
+                if (node.right != null) stack.push(node.right);
+                if (node.left != null) stack.push(node.left);
+            }
         }
+
+        return result;
     }
 
 }
