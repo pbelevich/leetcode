@@ -23,57 +23,44 @@ import java.util.Deque;
  */
 public class MyStack {
 
-    private Deque<Integer>[] queues;
-    private int active;
-    private Integer top;
+    private Deque<Integer> queue;
 
     /**
      * Initialize your data structure here.
      */
     public MyStack() {
-        queues = new Deque[2];
-        queues[0] = new ArrayDeque<>();
-        queues[1] = new ArrayDeque<>();
-        active = 0;
+        queue = new ArrayDeque<>();
     }
 
     /**
      * Push element x onto stack.
      */
     public void push(int x) {
-        queues[active].offer(x);
-        top = x;
+        queue.offer(x);
+        for (int i = 0; i < queue.size() - 1; i++) {
+            queue.offer(queue.pop());
+        }
     }
 
     /**
      * Removes the element on top of the stack and returns that element.
      */
     public int pop() {
-        int inactive = (active + 1) & 1;
-        Integer x = null;
-        while (!queues[active].isEmpty()) {
-            x = queues[active].poll();
-            if (!queues[active].isEmpty()) {
-                queues[inactive].offer(x);
-                top = x;
-            }
-        }
-        active = inactive;
-        return x;
+        return queue.pop();
     }
 
     /**
      * Get the top element.
      */
     public int top() {
-        return top;
+        return queue.peek();
     }
 
     /**
      * Returns whether the stack is empty.
      */
     public boolean empty() {
-        return queues[active].isEmpty();
+        return queue.isEmpty();
     }
 
 }
