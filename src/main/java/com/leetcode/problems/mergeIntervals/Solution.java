@@ -1,8 +1,8 @@
 package com.leetcode.problems.mergeIntervals;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,22 +21,25 @@ import java.util.List;
 public class Solution {
 
     public List<Interval> merge(List<Interval> intervals) {
-        if (intervals != null && intervals.size() > 1) {
-            intervals = new LinkedList<>(intervals);
-            Collections.sort(intervals, (o1, o2) -> Integer.compare(o1.start, o2.start));
-            Iterator<Interval> it = intervals.iterator();
-            Interval curr = it.next();
-            while (it.hasNext()) {
-                Interval next = it.next();
-                if (next.start <= curr.end) {
-                    curr.end = Math.max(next.end, curr.end);
-                    it.remove();
-                } else {
-                    curr = next;
-                }
+        if (intervals == null || intervals.size() <= 1) {
+            return intervals;
+        }
+        List<Interval> result = new ArrayList<>();
+        Collections.sort(intervals, (o1, o2) -> Integer.compare(o1.start, o2.start));
+
+        Iterator<Interval> it = intervals.iterator();
+        Interval curr = it.next();
+        while (it.hasNext()) {
+            Interval next = it.next();
+            if (next.start <= curr.end) {
+                curr.end = Math.max(next.end, curr.end);
+            } else {
+                result.add(curr);
+                curr = next;
             }
         }
-        return intervals;
+        result.add(curr);
+        return result;
     }
 
 }
