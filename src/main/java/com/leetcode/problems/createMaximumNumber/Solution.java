@@ -33,39 +33,43 @@ package com.leetcode.problems.createMaximumNumber;
 public class Solution {
 
     public int[] maxNumber(int[] nums1, int[] nums2, int k) {
-        return maxNumber(nums1, 0, nums2, 0, k);
-    }
-
-    int[] maxNumber(int[] nums1, int i1, int[] nums2, int i2, int k) {
-        int[] max = new int[k];
-        if (k > 0) {
-            for (int i = i1; i < nums1.length && (nums1.length - i + nums2.length - i2 >= k); i++) {
-                max = max(max, plus(nums1[i], maxNumber(nums1, i + 1, nums2, i2, k - 1)), 0);
-            }
-            for (int i = i2; i < nums2.length && (nums1.length - i1 + nums2.length - i >= k); i++) {
-                max = max(max, plus(nums2[i], maxNumber(nums1, i1, nums2, i + 1, k - 1)), 0);
+        int n = nums1.length;
+        int m = nums2.length;
+        int[] result = new int[k];
+        for (int i = Math.max(0, k - m); i <= k && i <= n; i++) {
+            int[] candidate = merge(maxArray(nums1, i), maxArray(nums2, k - i), k);
+            if (greater(candidate, 0, result, 0)) {
+                result = candidate;
             }
         }
-        return max;
-    }
-
-    int[] plus(int first, int[] array) {
-        final int[] result = new int[array.length + 1];
-        result[0] = first;
-        System.arraycopy(array, 0, result, 1, array.length);
         return result;
     }
 
-    int[] max(int[] a1, int[] a2, int i) {
-        if (i >= a1.length) {
-            return a1;
-        } else if (a1[i] > a2[i]) {
-            return a1;
-        } else if (a2[i] > a1[i]) {
-            return a2;
-        } else {
-            return max(a1, a2, i + 1);
+    int[] merge(int[] nums1, int[] nums2, int k) {
+        int[] ans = new int[k];
+        for (int i = 0, j = 0, r = 0; r < k; ++r)
+            ans[r] = greater(nums1, i, nums2, j) ? nums1[i++] : nums2[j++];
+        return ans;
+    }
+
+    boolean greater(int[] nums1, int i, int[] nums2, int j) {
+        while (i < nums1.length && j < nums2.length && nums1[i] == nums2[j]) {
+            i++;
+            j++;
         }
+        return j == nums2.length || (i < nums1.length && nums1[i] > nums2[j]);
+    }
+
+    int[] maxArray(int[] nums, int k) {
+        int n = nums.length;
+        int[] result = new int[k];
+        for (int i = 0, j = 0; i < n; i++) {
+            while (n - i + j > k && j > 0 && result[j - 1] < nums[i]) {
+                j--;
+            }
+            if (j < k) result[j++] = nums[i];
+        }
+        return result;
     }
 
 }
