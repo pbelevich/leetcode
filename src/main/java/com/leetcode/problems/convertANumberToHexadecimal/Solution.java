@@ -32,22 +32,31 @@ package com.leetcode.problems.convertANumberToHexadecimal;
  */
 public class Solution {
 
-    private static final char[] digits = new char[] {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+    private static final char[] digits = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public String toHex(int num) {
         if (num == 0) {
             return "0";
         }
-        StringBuilder result = new StringBuilder();
-        long numLong = num > 0 ? num : ((1L << 32) + num) ;
-        toHex(numLong, result);
-        return result.toString();
+        long numLong = num > 0 ? num : ((1L << 32) + num);
+        int n = length(numLong);
+        char[] chars = new char[n];
+        toHex(numLong, chars, n);
+        return new String(chars);
     }
 
-    private void toHex(long num, StringBuilder result) {
-        if (num != 0) {
-            result.insert(0, digits[(int) (num % 0x10)]);
-            toHex(num / 0x10, result);
+    private int length(long numLong) {
+        int n;
+        for (n = 0; numLong != 0;numLong >>= 4) {
+            n++;
+        }
+        return n;
+    }
+
+    private void toHex(long num, char[] chars, int i) {
+        if (i > 0) {
+            chars[i - 1] = digits[(int) (num % 0x10)];
+            toHex(num / 0x10, chars, i - 1);
         }
     }
 
