@@ -19,26 +19,12 @@ package com.leetcode.problems.removeDuplicatesFromSortedArray;
 public class Solution {
 
     public int removeDuplicates(int[] nums) {
-        if (nums == null) {
-            return 0;
-        }
-        if (nums.length < 2) {
-            return nums.length;
-        }
-        int prev = nums[nums.length - 1] + 1;
-        int j = nums.length - 1;
-        for (int i = nums.length - 1; i >= 0; i--) {
-            if (nums[i] != prev) {
-                if (i != nums.length - 1) {
-                    nums[j] = prev;
-                    j--;
-                }
-                prev = nums[i];
-            }
-        }
-        nums[j] = prev;
-        System.arraycopy(nums, j, nums, 0, nums.length - j);
-        return nums.length - j;
+        int n = nums.length;
+        if(n < 2) return n;
+        int id = 1;
+        for(int i = 1; i < n; ++i)
+            if(nums[i] != nums[i-1]) nums[id++] = nums[i];
+        return id;
     }
 
 }
