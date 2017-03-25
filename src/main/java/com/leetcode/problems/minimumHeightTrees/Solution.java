@@ -2,9 +2,8 @@ package com.leetcode.problems.minimumHeightTrees;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * https://leetcode.com/problems/minimum-height-trees/#/description
@@ -46,74 +45,36 @@ import java.util.Map;
  */
 public class Solution {
 
-    static class Key {
-
-        int v;
-        int e;
-
-        Key(int v, int e) {
-            this.v = v;
-            this.e = e;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Key key = (Key) o;
-
-            if (v != key.v) return false;
-            return e == key.e;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = v;
-            result = 31 * result + e;
-            return result;
-        }
-
-    }
-
-    private Collection<Integer>[] adj;
-    private Map<Key, Integer> cache;
-
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        this.adj = new Collection[n];
+        if (n == 1) {
+            return Collections.singletonList(0);
+        }
+
+        Collection<Integer>[] adj = new Collection[n];
         for (int v = 0; v < n; v++) {
-            this.adj[v] = new ArrayList<>(2);
+            adj[v] = new ArrayList<>(2);
         }
         for (int[] edge : edges) {
-            this.adj[edge[0]].add(edge[1]);
-            this.adj[edge[1]].add(edge[0]);
+            adj[edge[0]].add(edge[1]);
+            adj[edge[1]].add(edge[0]);
         }
-        this.cache = new HashMap<>();
-        List<Integer> result = new ArrayList<>();
-        int min = Integer.MAX_VALUE;
-        for (int v = 0; v < n; v++) {
-            int h = height(v, v);
-            if (h < min) {
-                result = new ArrayList<>();
-                result.add(v);
-                min = h;
-            } else if (h == min) {
-                result.add(v);
-            }
+        List<Integer> leaves = new ArrayList<>();
+        for (int i = 0; i < n; ++i) {
+            if (adj[i].size() == 1) leaves.add(i);
         }
-        return result;
-    }
 
-    int height(int v, int e) {
-        return cache.computeIfAbsent(new Key(v, e), k -> {
-            int height = 0;
-            for (int w : adj[v]) {
-                if (w != e) {
-                    height = Math.max(height, height(w, v));
-                }
+        while (n > 2) {
+            n -= leaves.size();
+            List<Integer> newLeaves = new ArrayList<>();
+            for (int i : leaves) {
+                int j = adj[i].iterator().next();
+                adj[j].remove(i);
+                if (adj[j].size() == 1) newLeaves.add(j);
             }
-            return 1 + height;
-        });
+            leaves = newLeaves;
+        }
+
+        return leaves;
     }
 
 }
