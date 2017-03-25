@@ -37,7 +37,15 @@ import java.util.TreeMap;
  */
 public class Solution {
 
-    private TreeMap<Integer, Integer> left = new TreeMap<>(Comparator.reverseOrder());
+    private static final java.util.function.BiFunction<Integer, Integer, Integer> INC = (k, v) -> v + 1;
+    private static final java.util.function.BiFunction<Integer, Integer, Integer> DEC = (k, v) -> v > 1 ? v - 1 : null;
+    private static final Comparator<Integer> REVERSE = new Comparator<Integer>() {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return Integer.compare(o2, o1);
+        }
+    };
+    private TreeMap<Integer, Integer> left = new TreeMap<>(REVERSE);
     private int leftSize;
     private TreeMap<Integer, Integer> right = new TreeMap<>();
     private int rightSize;
@@ -59,28 +67,26 @@ public class Solution {
 
     private void remove(int num) {
         if (!left.isEmpty() && num <= left.firstKey()) {
-            left.computeIfPresent(num, (k, v) -> v > 1 ? v - 1 : null);
+            left.computeIfPresent(num, DEC);
             leftSize--;
         } else if (!right.isEmpty() && num >= right.firstKey()) {
-            right.computeIfPresent(num, (k, v) -> v > 1 ? v - 1 : null);
+            right.computeIfPresent(num, DEC);
             rightSize--;
         }
         if (leftSize < rightSize) {
             Integer num1 = right.firstKey();
-            right.computeIfPresent(num1, (k, v) -> v > 1 ? v - 1 : null);
+            right.computeIfPresent(num1, DEC);
             rightSize--;
-
             left.putIfAbsent(num1, 0);
-            left.computeIfPresent(num1, (k, v) -> v + 1);
+            left.computeIfPresent(num1, INC);
             leftSize++;
         }
         if (leftSize > rightSize + 1) {
             Integer num1 = left.firstKey();
-            left.computeIfPresent(num1, (k, v) -> v > 1 ? v - 1 : null);
+            left.computeIfPresent(num1, DEC);
             leftSize--;
-
             right.putIfAbsent(num1, 0);
-            right.computeIfPresent(num1, (k, v) -> v + 1);
+            right.computeIfPresent(num1, INC);
             rightSize++;
         }
     }
@@ -88,23 +94,23 @@ public class Solution {
     private void insert(int num) {
         if (leftSize == rightSize) {
             right.putIfAbsent(num, 0);
-            right.computeIfPresent(num, (k, v) -> v + 1);
+            right.computeIfPresent(num, INC);
 
             Integer num1 = right.firstKey();
-            right.computeIfPresent(num1, (k, v) -> v > 1 ? v - 1 : null);
+            right.computeIfPresent(num1, DEC);
 
             left.putIfAbsent(num1, 0);
-            left.computeIfPresent(num1, (k, v) -> v + 1);
+            left.computeIfPresent(num1, INC);
             leftSize++;
         } else {
             left.putIfAbsent(num, 0);
-            left.computeIfPresent(num, (k, v) -> v + 1);
+            left.computeIfPresent(num, INC);
 
             Integer num1 = left.firstKey();
-            left.computeIfPresent(num1, (k, v) -> v > 1 ? v - 1 : null);
+            left.computeIfPresent(num1, DEC);
 
             right.putIfAbsent(num1, 0);
-            right.computeIfPresent(num1, (k, v) -> v + 1);
+            right.computeIfPresent(num1, INC);
             rightSize++;
         }
     }

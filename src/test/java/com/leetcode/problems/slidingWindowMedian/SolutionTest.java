@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
  */
 public class SolutionTest {
 
-
     @Test
     public void medianSlidingWindow() throws Exception {
         assertArrayEquals(new double[]{1, -1, -1, 3, 5, 6}, new Solution().medianSlidingWindow(new int[]{1, 3, -1, -3, 5, 3, 6, 7}, 3), 1e-9);
