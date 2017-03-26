@@ -22,30 +22,36 @@ import java.util.Arrays;
 public class Solution {
 
     private int[] nums;
-    private int[] memo;
+    private int[][] memo;
 
     public int lengthOfLIS(int[] nums) {
         this.nums = nums;
-        this.memo = new int[nums.length];
-        Arrays.fill(this.memo, -1);
-        int result = 0;
-        for (int f = 0; f < nums.length; f++) {
-            result = Math.max(result, 1 + lengthOfLIS(f));
+        this.memo = new int[nums.length + 1][nums.length + 1];
+        for (int[] l : memo) {
+            Arrays.fill(l, -1);
         }
-        return result;
+        return lengthOfLIS(-1, 0);
     }
 
-    private int lengthOfLIS(int f) {
-        if (memo[f] == -1) {
-            int result = 0;
-            for (int s = f + 1; s < nums.length; s++) {
-                if (nums[s] > nums[f]) {
-                    result = Math.max(result, 1 + lengthOfLIS(s));
-                }
+    private int lengthOfLIS(int prev, int start) {
+        if (this.memo[prev + 1][start] == -1) {
+            if (start == nums.length) {
+                return 0;
             }
-            memo[f] = result;
+            int result = lengthOfLIS(prev, start + 1);
+            if (nums[start] > getNum(nums, prev)) {
+                result = Math.max(result, 1 + lengthOfLIS(start, start + 1));
+            }
+            this.memo[prev + 1][start] =  result;
         }
-        return memo[f];
+        return this.memo[prev + 1][start];
+    }
+
+    private int getNum(int[] nums, int prev) {
+        if (prev == -1) {
+            return Integer.MIN_VALUE;
+        }
+        return nums[prev];
     }
 
 }
