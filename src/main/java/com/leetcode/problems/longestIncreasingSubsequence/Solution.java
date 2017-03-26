@@ -1,5 +1,7 @@
 package com.leetcode.problems.longestIncreasingSubsequence;
 
+import java.util.Arrays;
+
 /**
  * https://leetcode.com/problems/longest-increasing-subsequence/#/description
  * <p>
@@ -20,9 +22,12 @@ package com.leetcode.problems.longestIncreasingSubsequence;
 public class Solution {
 
     private int[] nums;
+    private int[] memo;
 
     public int lengthOfLIS(int[] nums) {
         this.nums = nums;
+        this.memo = new int[nums.length];
+        Arrays.fill(this.memo, -1);
         int result = 0;
         for (int f = 0; f < nums.length; f++) {
             result = Math.max(result, 1 + lengthOfLIS(f));
@@ -31,13 +36,16 @@ public class Solution {
     }
 
     private int lengthOfLIS(int f) {
-        int result = 0;
-        for (int s = f + 1; s < nums.length; s++) {
-            if (nums[s] > nums[f]) {
-                result = Math.max(result, 1 + lengthOfLIS(s));
+        if (memo[f] == -1) {
+            int result = 0;
+            for (int s = f + 1; s < nums.length; s++) {
+                if (nums[s] > nums[f]) {
+                    result = Math.max(result, 1 + lengthOfLIS(s));
+                }
             }
+            memo[f] = result;
         }
-        return result;
+        return memo[f];
     }
 
 }
