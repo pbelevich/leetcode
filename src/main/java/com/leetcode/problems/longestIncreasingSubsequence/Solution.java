@@ -19,17 +19,23 @@ package com.leetcode.problems.longestIncreasingSubsequence;
  */
 public class Solution {
 
+    private int[] nums;
+
     public int lengthOfLIS(int[] nums) {
-        return lengthOfLIS(nums, Integer.MIN_VALUE, 0);
+        this.nums = nums;
+        int result = 0;
+        for (int f = 0; f < nums.length; f++) {
+            result = Math.max(result, 1 + lengthOfLIS(f));
+        }
+        return result;
     }
 
-    private int lengthOfLIS(int[] nums, int prev, int start) {
-        if (start == nums.length) {
-            return 0;
-        }
-        int result = lengthOfLIS(nums, prev, start + 1);
-        if (nums[start] > prev) {
-            result = Math.max(result, 1 + lengthOfLIS(nums, nums[start], start + 1));
+    private int lengthOfLIS(int f) {
+        int result = 0;
+        for (int s = f + 1; s < nums.length; s++) {
+            if (nums[s] > nums[f]) {
+                result = Math.max(result, 1 + lengthOfLIS(s));
+            }
         }
         return result;
     }
