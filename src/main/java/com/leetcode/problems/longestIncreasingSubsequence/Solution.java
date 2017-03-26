@@ -1,7 +1,5 @@
 package com.leetcode.problems.longestIncreasingSubsequence;
 
-import java.util.Arrays;
-
 /**
  * https://leetcode.com/problems/longest-increasing-subsequence/#/description
  * <p>
@@ -21,37 +19,24 @@ import java.util.Arrays;
  */
 public class Solution {
 
-    private int[] nums;
-    private int[][] memo;
-
     public int lengthOfLIS(int[] nums) {
-        this.nums = nums;
-        this.memo = new int[nums.length + 1][nums.length + 1];
-        for (int[] l : memo) {
-            Arrays.fill(l, -1);
+        if (nums.length < 2) {
+            return nums.length;
         }
-        return lengthOfLIS(-1, 0);
-    }
-
-    private int lengthOfLIS(int prev, int start) {
-        if (this.memo[prev + 1][start] == -1) {
-            if (start == nums.length) {
-                return 0;
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int result = 0;
+        for (int i = 1; i < nums.length; i++) {
+            int max = 0;
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    max = Math.max(max, dp[j]);
+                }
             }
-            int result = lengthOfLIS(prev, start + 1);
-            if (nums[start] > getNum(nums, prev)) {
-                result = Math.max(result, 1 + lengthOfLIS(start, start + 1));
-            }
-            this.memo[prev + 1][start] =  result;
+            dp[i] = max + 1;
+            result = Math.max(result, dp[i]);
         }
-        return this.memo[prev + 1][start];
-    }
-
-    private int getNum(int[] nums, int prev) {
-        if (prev == -1) {
-            return Integer.MIN_VALUE;
-        }
-        return nums[prev];
+        return result;
     }
 
 }
