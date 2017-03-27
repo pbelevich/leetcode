@@ -24,8 +24,20 @@ import java.util.List;
  */
 public class Solution {
 
+    private List<TreeNode>[][] dp;
+
     public List<TreeNode> generateTrees(int n) {
-        return generateTrees(1, n + 1);
+        if (n == 0) {
+            return Collections.emptyList();
+        }
+        dp = new List[n + 2][n + 2];
+        for (int l = 0; l <= n; l++) {
+            for (int lo = 1; lo + l <= n + 1; lo++) {
+                int hi = lo + l;
+                dp[lo][hi] = generateTrees(lo, hi);
+            }
+        }
+        return dp[1][n + 1];
     }
 
     private List<TreeNode> generateTrees(int lo, int hi) {
@@ -38,9 +50,12 @@ public class Solution {
         }
         List<TreeNode> result = new ArrayList<>();
         for (int m = lo; m < hi; m++) {
-            for (TreeNode left : generateTrees(lo, m)) {
-                for (TreeNode right : generateTrees(m + 1, hi)) {
-                    result.add(new TreeNode(m, left, right));
+            for (TreeNode left : dp[lo][m]) {
+                for (TreeNode right : dp[m + 1][hi]) {
+                    final TreeNode node = new TreeNode(m);
+                    node.left = left;
+                    node.right = right;
+                    result.add(node);
                 }
             }
         }

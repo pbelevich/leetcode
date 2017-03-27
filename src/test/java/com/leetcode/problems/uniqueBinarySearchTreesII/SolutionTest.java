@@ -13,7 +13,7 @@ public class SolutionTest {
 
     @Test
     public void generateTrees() throws Exception {
-        assertEquals(1, SOLUTION.generateTrees(0).size());
+        assertEquals(0, SOLUTION.generateTrees(0).size());
         assertEquals(1, SOLUTION.generateTrees(1).size());
         assertEquals(2, SOLUTION.generateTrees(2).size());
         assertEquals(5, SOLUTION.generateTrees(3).size());
