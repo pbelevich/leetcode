@@ -19,27 +19,30 @@ import java.util.Comparator;
  */
 public class Solution {
 
-    public int maxEnvelopes(int[][] envelopes) {
-        if (envelopes.length < 2) {
-            return envelopes.length;
+    private static final Comparator<int[]> byWidthThenByHeightReversed = new Comparator<int[]>() {
+        @Override
+        public int compare(int[] o1, int[] o2) {
+            final int byWidth = Integer.compare(o1[0], o2[0]);
+            return byWidth == 0 ? Integer.compare(o2[1], o1[1]) : byWidth;
         }
-        Arrays.sort(envelopes, Comparator.comparingInt(o -> o[0]));
-        int[] res = new int[envelopes.length];
-        Arrays.fill(res, 1);
-        for (int i = 0; i < envelopes.length; i++) {
-            int[] I = envelopes[i];
-            for (int j = i + 1; j < envelopes.length; j++) {
-                int[] J = envelopes[j];
-                if (J[1] > I[1] && J[0] > I[0]) {
-                    res[j] = Math.max(res[j], 1 + res[i]);
-                }
+    };
+
+    public int maxEnvelopes(int[][] envelopes) {
+        Arrays.sort(envelopes, byWidthThenByHeightReversed);
+        int[] dp = new int[envelopes.length];
+        int len = 0;
+        for (int[] e : envelopes) {
+            final int h = e[1];
+            int i = Arrays.binarySearch(dp, 0, len, h);
+            if (i < 0) {
+                i = -(i + 1);
+            }
+            dp[i] = h;
+            if (i == len) {
+                len++;
             }
         }
-        int max = 0;
-        for (int i = 0; i < res.length; i++) {
-            max = Math.max(max, res[i]);
-        }
-        return max;
+        return len;
     }
 
 }
