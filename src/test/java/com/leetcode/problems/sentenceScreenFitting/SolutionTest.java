@@ -28,7 +28,7 @@ public class SolutionTest {
 
     @Test
     public void wordsTyping4() throws Exception {
-        assertEquals(1, SOLUTION.wordsTyping(new String[]{"a", "b", "e"}, 20000, 20000));
+        assertEquals(66666666, SOLUTION.wordsTyping(new String[]{"a", "b", "e"}, 20000, 20000));
     }
 
     @Test
