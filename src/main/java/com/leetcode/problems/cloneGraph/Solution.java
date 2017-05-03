@@ -1,7 +1,9 @@
 package com.leetcode.problems.cloneGraph;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * https://leetcode.com/problems/clone-graph/
@@ -14,22 +16,29 @@ import java.util.Map;
  */
 public class Solution {
 
-    private Map<Integer, UndirectedGraphNode> map = new HashMap<>();
-
     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
         if (node == null) {
             return null;
         }
-
-        UndirectedGraphNode clone = map.get(node.label);
-        if (clone == null) {
-            clone = new UndirectedGraphNode(node.label);
-            map.put(clone.label, clone);
-            for (UndirectedGraphNode neighbor : node.neighbors) {
-                clone.neighbors.add(cloneGraph(neighbor));
+        Map<Integer, UndirectedGraphNode> map = new HashMap<>();
+        Queue<UndirectedGraphNode> queue = new LinkedList<>();
+        queue.offer(node);
+        final UndirectedGraphNode result = new UndirectedGraphNode(node.label);
+        map.put(node.label, result);
+        while (!queue.isEmpty()) {
+            UndirectedGraphNode n = queue.poll();
+            UndirectedGraphNode clone = map.get(n.label);
+            for (UndirectedGraphNode neighbor : n.neighbors) {
+                UndirectedGraphNode neighborClone = map.get(neighbor.label);
+                if (neighborClone == null) {
+                    neighborClone = new UndirectedGraphNode(neighbor.label);
+                    map.put(neighbor.label, neighborClone);
+                    queue.offer(neighbor);
+                }
+                clone.neighbors.add(neighborClone);
             }
         }
-        return clone;
+        return result;
     }
 
 }
