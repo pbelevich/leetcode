@@ -32,7 +32,7 @@ public class SolutionTest {
     @Test
     public void findItinerary4() throws Exception {
         assertEquals(Arrays.asList("JFK", "NRT", "JFK", "KUL"),
-                new Solution().findItinerary(new String[][]{{"JFK", "KUL"}, {"JFK", "NRT"}, {"NRT", "JFK"}, {"KUL", "JFK"}}));
+                new Solution().findItinerary(new String[][]{{"JFK", "KUL"}, {"JFK", "NRT"}, {"NRT", "JFK"}}));
     }
 
 }
