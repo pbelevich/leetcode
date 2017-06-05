@@ -1,13 +1,14 @@
 package com.leetcode.problems.wordLadder;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * https://leetcode.com/problems/word-ladder/
@@ -38,73 +39,68 @@ import java.util.Queue;
  */
 public class Solution {
 
-    private Map<String, Iterable<Integer>> hashes = new HashMap<>();
-
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Map<Integer, Collection<String>> map = new HashMap<>();
-        for (String word : wordList) {
-            put(map, word);
-        }
-        Map<String, Integer> dist = new HashMap<>();
+    static class Context {
+        Queue<String> queue = new ArrayDeque<>();
         Map<String, Boolean> visited = new HashMap<>();
-        dist.put(beginWord, 1);
-        Queue<String> queue = new PriorityQueue<>((o1, o2) -> dist.get(o1).compareTo(dist.get(o2)));
-        queue.offer(beginWord);
-        String word;
-        while (!queue.isEmpty() && !endWord.equals(word = queue.poll())) {
-            visited.put(word, true);
-            put(map, dist, word, visited, queue);
+        int level;
+
+        Context(String begin) {
+            queue.offer(begin);
+            visited.put(begin, true);
         }
-        return dist.getOrDefault(endWord, 0);
     }
 
-    private void put(Map<Integer, Collection<String>> map, Map<String, Integer> dist, String word, Map<String, Boolean> visited, Queue<String> queue) {
-        final Integer distToWord = dist.get(word);
-        for (Integer hash : hashes(word)) {
-            final Collection<String> adj = map.get(hash);
-            if (adj != null) {
-                for (String adjusted : adj) {
-                    if (!word.equals(adjusted)) {
-                        final Integer distToAdjusted = dist.get(adjusted);
-                        if (distToAdjusted == null || distToWord + 1 < distToAdjusted) {
-                            dist.put(adjusted, distToWord + 1);
-                        }
-                        if (!visited.getOrDefault(adjusted, false)) {
-                            if (queue.contains(adjusted)) {
-                                queue.remove(adjusted);
-                            }
-                            queue.offer(adjusted);
-                        }
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (!wordList.contains(endWord)) {
+            return 0;
+        }
+        Set<String> words = new HashSet<>(wordList);
+        words.add(beginWord);
+        words.add(endWord);
+
+        final Context bContext = new Context(beginWord);
+        final Context eContext = new Context(endWord);
+        Context active = bContext;
+        Context inactive = eContext;
+        while (!active.queue.isEmpty()) {
+            int size = active.queue.size();
+            for (int i = 0; i < size; i++) {
+                final String word = active.queue.poll();
+                if (inactive.visited.getOrDefault(word, false)) {
+                    return active.level + inactive.level + 1;
+                }
+                for (String w : adj(words, word)) {
+                    if (!active.visited.getOrDefault(w, false)) {
+                        active.queue.offer(w);
+                        active.visited.put(w, true);
                     }
                 }
             }
+            active.level++;
+
+            active = active == bContext ? eContext : bContext;
+            inactive = inactive == bContext ? eContext : bContext;
         }
+        return 0;
     }
 
-    void put(Map<Integer, Collection<String>> map, String word) {
-        for (Integer hash : hashes(word)) {
-            Collection<String> words = map.get(hash);
-            if (words == null) {
-                words = new ArrayList<>();
-                map.put(hash, words);
+    private Collection<String> adj(Set<String> words, String word) {
+        final Collection<String> adj = new ArrayList<>();
+        final char[] chars = word.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            for (char x = 'a'; x <= 'z'; x++) {
+                if (x != c) {
+                    chars[i] = x;
+                    final String newWord = new String(chars);
+                    if (words.contains(newWord)) {
+                        adj.add(newWord);
+                    }
+                }
             }
-            words.add(word);
+            chars[i] = c;
         }
-    }
-
-    Iterable<Integer> hashes(String word) {
-        return hashes.computeIfAbsent(word, w -> {
-            final char[] chars = word.toCharArray();
-            Collection<Integer> result = new ArrayList<>();
-            for (int i = 0; i < chars.length; i++) {
-                char temp = chars[i];
-                chars[i] = 0;
-                result.add(Arrays.hashCode(chars));
-                chars[i] = temp;
-            }
-            return result;
-        });
+        return adj;
     }
 
 }
-
